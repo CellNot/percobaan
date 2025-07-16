@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>Ambil Foto</title></head>
+<body>
+  <h2>Ambil Foto</h2>
+  <video id="video" width="320" height="240" autoplay></video><br>
+  <button onclick="takePhoto()">📸 Ambil</button>
+
+  <script>
+    const video = document.getElementById('video');
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => video.srcObject = stream);
+
+    function takePhoto() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 240;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+
+      fetch("http://192.168.1.10:8080/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: dataUrl })
+      }).then(() => alert("Foto dikirim!"));
+    }
+  </script>
+</body>
+</html>
